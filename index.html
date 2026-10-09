@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#EAF0EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1A1F" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Japan 2026">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Japan, October 2026</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand">
+    <div>
+      <h1>Japan, October 2026</h1>
+      <ul class="route-strip" id="routeStrip" aria-label="Route"></ul>
+    </div>
+    <div class="brand-r"><p class="count" id="count"></p><button class="btn" id="lockBtn" type="button"></button></div>
+  </div>
+</div></header>
+
+<nav class="tabs" aria-label="Trip views"><div class="wrap" id="tabs">
+  <button class="tab" data-v="map" aria-current="page">Map</button>
+  <button class="tab" data-v="cal">Calendar</button>
+  <button class="tab" data-v="stays">Stays</button>
+  <button class="tab" data-v="move">Transport</button>
+  <button class="tab" data-v="todo">To-do</button>
+</div></nav>
+
+<main class="wrap">
+  <section class="view" id="view-map">
+    <h2 class="sr">Route map</h2>
+    <div class="maplayout">
+      <div class="mapcard">
+        <div class="mapbar" id="mapbar" role="group" aria-label="Map focus"></div>
+        <div class="mapbox">
+          <svg id="map" role="img" aria-label="Map of the route: Tokyo, Hakuba, Onomichi, Osaka, Nara, Kyoto, then back to Narita" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="mapctl" role="group" aria-label="Zoom">
+            <button class="iconbtn" id="zoomIn" type="button" aria-label="Zoom in"></button>
+            <button class="iconbtn" id="zoomOut" type="button" aria-label="Zoom out"></button>
+          </div>
+          <p class="maphint" id="maphint" aria-hidden="true">Drag to move. Pinch or Ctrl+scroll to zoom.</p>
+          <div class="pincard" id="pincard" role="region" aria-label="Place details" aria-live="polite" hidden></div>
+        </div>
+        <div class="scrub">
+          <button class="btn" id="play" type="button"></button>
+          <div class="scrub-range">
+            <input type="range" id="range" min="0" max="14" step="1" value="0" aria-label="Trip day">
+            <div class="ticks" aria-hidden="true"><span>Oct 14</span><span>Oct 21</span><span>Oct 28</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="side">
+        <article class="readout" id="readout" aria-label="Selected day"></article>
+        <ol class="stages" id="stages" aria-label="Stops"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-cal" hidden>
+    <h2>October 2026</h2>
+    <p class="lede">Pick a day for the full plan. The colored edge shows where you sleep that night.</p>
+    <ul class="legend" id="legend"></ul>
+    <div class="cal-head" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+    <div class="cal" id="cal"></div>
+    <p class="wk-note">Dashed badge: things still to do on that day.</p>
+  </section>
+
+  <section class="view" id="view-stays" hidden>
+    <h2>Where you’re staying</h2>
+    <p class="lede">Six bookings across five stops, 14 nights in Japan.</p>
+    <div class="grid" id="stays"></div>
+  </section>
+
+  <section class="view" id="view-move" hidden>
+    <h2>Flights, trains, and bags</h2>
+    <p class="lede">You’re on a Suica card with no rail pass, so reserved-seat trains and the Skyliner need their own tickets.</p>
+    <ol class="moves" id="moves"></ol>
+    <h3 class="sub-h">Luggage plan</h3>
+    <p class="lede" style="margin-bottom:12px">Yamato Takkyubin forwards bags hotel to hotel, with JAL ABC as backup. Allow next-day delivery, plus a day extra for mountain or long-distance stops. Roughly ¥1,500 to ¥3,500 per bag per leg.</p>
+    <ul class="bags" id="bags"></ul>
+  </section>
+
+  <section class="view" id="view-todo" hidden>
+    <h2>What’s left to do</h2>
+    <p class="lede">Taken from the trip plan. Tap a date to jump to that day.</p>
+    <div class="two">
+      <div>
+        <h3 class="sub-h" style="margin-top:0">Still open</h3>
+        <ul class="tasks" id="open"></ul>
+      </div>
+      <div>
+        <h3 class="sub-h" style="margin-top:0">Done</h3>
+        <ul class="tasks" id="done"></ul>
+        <p class="dropped"><b>Dropped on purpose:</b> the Arima Onsen ryokan and the Matsumoto hotel. Kyoto picked up the extra night.</p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><span id="footText"></span> <span id="offlineState"></span></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
+  <div class="sh-bar">
+    <div class="sh-nav">
+      <button class="iconbtn" id="prevDay" aria-label="Previous day"></button>
+      <button class="iconbtn" id="nextDay" aria-label="Next day"></button>
+    </div>
+    <button class="iconbtn" id="closeSheet" aria-label="Close"></button>
+  </div>
+  <div class="sh-body" id="shBody"></div>
+</aside>
+<dialog id="unlockDlg" aria-labelledby="unlockTitle">
+  <form id="unlockForm" novalidate>
+    <h2 id="unlockTitle">Unlock details</h2>
+    <p class="dlg-lede">Booking and confirmation numbers are stored encrypted. Type your passphrase to show them on this screen.</p>
+    <label for="pass">Passphrase</label>
+    <input id="pass" name="passphrase" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false">
+    <label class="keep"><input type="checkbox" id="keep"><span>Keep unlocked on this device</span></label>
+    <p class="dlg-note">Off by default. When on, a key (never the text itself) stays in this browser until you tap Lock and forget.</p>
+    <p class="dlg-err" id="unlockErr" role="alert" hidden></p>
+    <div class="dlg-actions">
+      <button class="btn" type="button" id="unlockCancel">Cancel</button>
+      <button class="btn primary" type="submit" id="unlockGo">Unlock</button>
+    </div>
+  </form>
+</dialog>
+<p class="sr" id="lockStatus" aria-live="polite"></p>
+
+<script src="data/trip.js"></script>
+<script src="data/geo.js"></script>
+<script src="details-crypto.js"></script>
+<script src="app.js"></script>
+<script src="secrets.js"></script>
+<script src="map-nav.js"></script>
+<script src="pwa.js"></script>
+</body>
+</html>
